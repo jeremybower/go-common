@@ -6,6 +6,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestIsPort(t *testing.T) {
+	assert.NoError(t, IsPort("80"))
+	assert.ErrorIs(t, IsPort("0"), ErrInvalidPortNumber)
+	assert.ErrorIs(t, IsPort("65536"), ErrInvalidPortNumber)
+	assert.ErrorIs(t, IsPort("invalid"), ErrInvalidPortNumber)
+}
+
 func TestNotEmpty(t *testing.T) {
 	assert.NoError(t, NotEmpty("test"))
 	assert.ErrorIs(t, NotEmpty(""), ErrEmpty)

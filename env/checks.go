@@ -2,6 +2,8 @@ package env
 
 import (
 	"errors"
+	"fmt"
+	"strconv"
 	"strings"
 
 	"golang.org/x/exp/constraints"
@@ -9,6 +11,21 @@ import (
 
 type Number interface {
 	constraints.Integer | constraints.Float
+}
+
+var ErrInvalidPortNumber = errors.New("value must be a valid port number")
+
+func IsPort(v string) error {
+	port, err := strconv.ParseInt(v, 10, 64)
+	if err != nil {
+		return fmt.Errorf("%w: %w", ErrInvalidPortNumber, err)
+	}
+
+	if port < 1 || port > 65535 {
+		return fmt.Errorf("%w: %d", ErrInvalidPortNumber, port)
+	}
+
+	return nil
 }
 
 var ErrEmpty = errors.New("value must not be empty")
