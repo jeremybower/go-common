@@ -4,13 +4,12 @@ import (
 	"errors"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jeremybower/go-common"
 )
-
-var ErrNotFound = errors.New("not found")
 
 func NormalizeError(err error) error {
 	if errors.Is(err, pgx.ErrNoRows) {
-		return ErrNotFound
+		return common.ErrNotFound
 	}
 
 	return err
