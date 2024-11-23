@@ -132,6 +132,51 @@ RUN <<EOT
 EOT
 
 # -----------------------------------------------------------------------------
+# Install Docker
+# -----------------------------------------------------------------------------
+
+# Reset to root user.
+USER root
+
+# Docker install guide:
+# https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
+
+ARG DOCKER_GID=
+
+RUN <<EOT
+    # If DOCKER_GID is set, then create the docker group with that GID before
+    # the install script creates the group with a different GID.
+    if [ -n "${DOCKER_GID}" ]; then
+        groupadd -g ${DOCKER_GID} docker
+    fi
+
+    # Add Docker keyring.
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+        | gpg --dearmor -o ${KEYRING_PATH}/docker-apt-keyring.gpg
+
+    # Add Docker to source list.
+    echo \
+        "deb [arch=$(dpkg --print-architecture) signed-by=${KEYRING_PATH}/docker-apt-keyring.gpg] \
+        https://download.docker.com/linux/ubuntu \
+        $(lsb_release -cs) stable" \
+        > /etc/apt/sources.list.d/docker.list
+
+    # Update sources.
+    apt-get update
+
+    # Install packages.
+    apt-get install -y --no-install-recommends \
+        containerd.io \
+        docker-ce \
+        docker-ce-cli \
+        docker-buildx-plugin \
+        docker-compose-plugin
+
+    # Add user to docker group.
+    usermod --append --groups docker ${USERNAME}
+EOT
+
+# -----------------------------------------------------------------------------
 # Install Postgres Client
 # -----------------------------------------------------------------------------
 
