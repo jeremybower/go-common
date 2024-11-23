@@ -14,6 +14,8 @@ init: ## Initialize the project.
 test: ## Test the project.
 	@$(eval include .env)
 	@$(eval export)
+
+	@echo "Testing..."
 	@mkdir -p coverage
 	@go test \
 		-cover \
@@ -22,9 +24,16 @@ test: ## Test the project.
 		-count=1 \
 		-failfast \
 		./...
+
+	@echo "Generating coverage report..."
 	@go tool cover \
 		-html=coverage/coverage.out \
 		-o coverage/coverage.html
+
+	@echo "Dropping test databases..."
+	@set -e; for dbname in $$(psql "${DATABASE_URL}" -c "copy (select datname from pg_database where datname like 'test-%') to stdout") ; do \
+		psql "${DATABASE_URL}" -q -c "DROP DATABASE \"$$dbname\"" ; \
+	done
 
 tidy: ## Tidy the go modules.
 	@$(eval include .env)
