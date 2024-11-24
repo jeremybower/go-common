@@ -32,6 +32,20 @@ func TestNilableArray(t *testing.T) {
 	}).Slice)
 }
 
+func TestRequiredFlatArray(t *testing.T) {
+	t.Parallel()
+
+	assert.Equal(t, []int{1, 2, 3}, RequiredFlatArray([]int{1, 2, 3}))
+	assert.Panics(t, func() { RequiredFlatArray[int](nil) })
+}
+
+func TestNilableFlatArray(t *testing.T) {
+	t.Parallel()
+
+	assert.Nil(t, NilableFlatArray[int](nil).Slice)
+	assert.Equal(t, []int{1, 2, 3}, NilableFlatArray([]int{1, 2, 3}).Slice)
+}
+
 func TestRequiredBool(t *testing.T) {
 	t.Parallel()
 

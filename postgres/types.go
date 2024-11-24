@@ -30,6 +30,22 @@ func NilableArray[T any](a pgtype.Array[T]) nilable.Slice[T] {
 	return nilable.NewSlice(a.Elements)
 }
 
+func RequiredFlatArray[T any](a pgtype.FlatArray[T]) []T {
+	if a == nil {
+		panic(fmt.Sprintf("invalid array of type %T", a))
+	}
+
+	return a
+}
+
+func NilableFlatArray[T any](a pgtype.FlatArray[T]) nilable.Slice[T] {
+	if a == nil {
+		return nilable.NilSlice[T]()
+	}
+
+	return nilable.NewSlice(a)
+}
+
 //-----------------------------------------------------------------------------
 // Bool
 //-----------------------------------------------------------------------------
