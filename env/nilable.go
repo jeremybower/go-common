@@ -12,7 +12,7 @@ import (
 func Nilable(name string, checks ...func(string) error) nilable.Value[string] {
 	v, ok := os.LookupEnv(name)
 	if !ok {
-		return nilable.Invalid[string]()
+		return nilable.InvalidValue[string]()
 	}
 
 	for _, check := range checks {
@@ -21,13 +21,13 @@ func Nilable(name string, checks ...func(string) error) nilable.Value[string] {
 		}
 	}
 
-	return nilable.New(&v)
+	return nilable.NewValue(&v)
 }
 
 func NilableBool(name string) nilable.Value[bool] {
 	str := Nilable(name, NotEmpty)
 	if !str.Valid {
-		return nilable.Invalid[bool]()
+		return nilable.InvalidValue[bool]()
 	}
 
 	v, err := strconv.ParseBool(*str.Value)
@@ -35,13 +35,13 @@ func NilableBool(name string) nilable.Value[bool] {
 		panic(fmt.Errorf("invalid boolean value for environment variable: %s (%w)", name, err))
 	}
 
-	return nilable.New(&v)
+	return nilable.NewValue(&v)
 }
 
 func NilableFloat32(name string, checks ...func(float32) error) nilable.Value[float32] {
 	str := Nilable(name, NotEmpty)
 	if !str.Valid {
-		return nilable.Invalid[float32]()
+		return nilable.InvalidValue[float32]()
 	}
 
 	v64, err := strconv.ParseFloat(*str.Value, 32)
@@ -56,13 +56,13 @@ func NilableFloat32(name string, checks ...func(float32) error) nilable.Value[fl
 		}
 	}
 
-	return nilable.New(&v)
+	return nilable.NewValue(&v)
 }
 
 func NilableFloat64(name string, checks ...func(float64) error) nilable.Value[float64] {
 	str := Nilable(name, NotEmpty)
 	if !str.Valid {
-		return nilable.Invalid[float64]()
+		return nilable.InvalidValue[float64]()
 	}
 
 	v64, err := strconv.ParseFloat(*str.Value, 64)
@@ -76,13 +76,13 @@ func NilableFloat64(name string, checks ...func(float64) error) nilable.Value[fl
 		}
 	}
 
-	return nilable.New(&v64)
+	return nilable.NewValue(&v64)
 }
 
 func NilableInt(name string, checks ...func(int) error) nilable.Value[int] {
 	str := Nilable(name, NotEmpty)
 	if !str.Valid {
-		return nilable.Invalid[int]()
+		return nilable.InvalidValue[int]()
 	}
 
 	v, err := strconv.Atoi(*str.Value)
@@ -96,13 +96,13 @@ func NilableInt(name string, checks ...func(int) error) nilable.Value[int] {
 		}
 	}
 
-	return nilable.New(&v)
+	return nilable.NewValue(&v)
 }
 
 func NilableInt32(name string, checks ...func(int32) error) nilable.Value[int32] {
 	str := Nilable(name, NotEmpty)
 	if !str.Valid {
-		return nilable.Invalid[int32]()
+		return nilable.InvalidValue[int32]()
 	}
 
 	v64, err := strconv.ParseInt(*str.Value, 10, 32)
@@ -117,13 +117,13 @@ func NilableInt32(name string, checks ...func(int32) error) nilable.Value[int32]
 		}
 	}
 
-	return nilable.New(&v)
+	return nilable.NewValue(&v)
 }
 
 func NilableInt64(name string, checks ...func(int64) error) nilable.Value[int64] {
 	str := Nilable(name, NotEmpty)
 	if !str.Valid {
-		return nilable.Invalid[int64]()
+		return nilable.InvalidValue[int64]()
 	}
 
 	v, err := strconv.ParseInt(*str.Value, 10, 64)
@@ -137,13 +137,13 @@ func NilableInt64(name string, checks ...func(int64) error) nilable.Value[int64]
 		}
 	}
 
-	return nilable.New(&v)
+	return nilable.NewValue(&v)
 }
 
 func NilableURL(name string) nilable.Value[url.URL] {
 	str := Nilable(name, NotEmpty)
 	if !str.Valid {
-		return nilable.Invalid[url.URL]()
+		return nilable.InvalidValue[url.URL]()
 	}
 
 	u, err := url.ParseRequestURI(*str.Value)
@@ -151,5 +151,5 @@ func NilableURL(name string) nilable.Value[url.URL] {
 		panic(fmt.Errorf("invalid URL value for environment variable: %s (%w)", name, err))
 	}
 
-	return nilable.New(u)
+	return nilable.NewValue(u)
 }
