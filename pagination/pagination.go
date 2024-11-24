@@ -6,7 +6,7 @@ import (
 	"github.com/jeremybower/go-guard"
 )
 
-type Items[T any] struct {
+type Result[T any] struct {
 	PageIndex      int64
 	PageSize       int64
 	FirstItemIndex int64
