@@ -12,7 +12,7 @@ import (
 func Optional(name string, checks ...func(string) error) optional.Value[string] {
 	v, ok := os.LookupEnv(name)
 	if !ok {
-		return optional.Invalid[string]()
+		return optional.InvalidValue[string]()
 	}
 
 	for _, check := range checks {
@@ -21,13 +21,13 @@ func Optional(name string, checks ...func(string) error) optional.Value[string] 
 		}
 	}
 
-	return optional.New(v)
+	return optional.NewValue(v)
 }
 
 func OptionalBool(name string) optional.Value[bool] {
 	str := Optional(name, NotEmpty)
 	if !str.Valid {
-		return optional.Invalid[bool]()
+		return optional.InvalidValue[bool]()
 	}
 
 	v, err := strconv.ParseBool(str.Value)
@@ -35,13 +35,13 @@ func OptionalBool(name string) optional.Value[bool] {
 		panic(fmt.Errorf("invalid boolean value for environment variable: %s (%w)", name, err))
 	}
 
-	return optional.New(v)
+	return optional.NewValue(v)
 }
 
 func OptionalFloat32(name string, checks ...func(float32) error) optional.Value[float32] {
 	str := Optional(name, NotEmpty)
 	if !str.Valid {
-		return optional.Invalid[float32]()
+		return optional.InvalidValue[float32]()
 	}
 
 	v64, err := strconv.ParseFloat(str.Value, 32)
@@ -56,13 +56,13 @@ func OptionalFloat32(name string, checks ...func(float32) error) optional.Value[
 		}
 	}
 
-	return optional.New(v)
+	return optional.NewValue(v)
 }
 
 func OptionalFloat64(name string, checks ...func(float64) error) optional.Value[float64] {
 	str := Optional(name, NotEmpty)
 	if !str.Valid {
-		return optional.Invalid[float64]()
+		return optional.InvalidValue[float64]()
 	}
 
 	v64, err := strconv.ParseFloat(str.Value, 64)
@@ -76,13 +76,13 @@ func OptionalFloat64(name string, checks ...func(float64) error) optional.Value[
 		}
 	}
 
-	return optional.New(v64)
+	return optional.NewValue(v64)
 }
 
 func OptionalInt(name string, checks ...func(int) error) optional.Value[int] {
 	str := Optional(name, NotEmpty)
 	if !str.Valid {
-		return optional.Invalid[int]()
+		return optional.InvalidValue[int]()
 	}
 
 	v, err := strconv.Atoi(str.Value)
@@ -96,13 +96,13 @@ func OptionalInt(name string, checks ...func(int) error) optional.Value[int] {
 		}
 	}
 
-	return optional.New(v)
+	return optional.NewValue(v)
 }
 
 func OptionalInt32(name string, checks ...func(int32) error) optional.Value[int32] {
 	str := Optional(name, NotEmpty)
 	if !str.Valid {
-		return optional.Invalid[int32]()
+		return optional.InvalidValue[int32]()
 	}
 
 	v64, err := strconv.ParseInt(str.Value, 10, 32)
@@ -117,13 +117,13 @@ func OptionalInt32(name string, checks ...func(int32) error) optional.Value[int3
 		}
 	}
 
-	return optional.New(v)
+	return optional.NewValue(v)
 }
 
 func OptionalInt64(name string, checks ...func(int64) error) optional.Value[int64] {
 	str := Optional(name, NotEmpty)
 	if !str.Valid {
-		return optional.Invalid[int64]()
+		return optional.InvalidValue[int64]()
 	}
 
 	v, err := strconv.ParseInt(str.Value, 10, 64)
@@ -137,13 +137,13 @@ func OptionalInt64(name string, checks ...func(int64) error) optional.Value[int6
 		}
 	}
 
-	return optional.New(v)
+	return optional.NewValue(v)
 }
 
 func OptionalURL(name string) optional.Value[url.URL] {
 	str := Optional(name, NotEmpty)
 	if !str.Valid {
-		return optional.Invalid[url.URL]()
+		return optional.InvalidValue[url.URL]()
 	}
 
 	u, err := url.ParseRequestURI(str.Value)
@@ -151,5 +151,5 @@ func OptionalURL(name string) optional.Value[url.URL] {
 		panic(fmt.Errorf("invalid URL value for environment variable: %s (%w)", name, err))
 	}
 
-	return optional.New(*u)
+	return optional.NewValue(*u)
 }

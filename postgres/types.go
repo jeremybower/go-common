@@ -1,11 +1,13 @@
 package postgres
 
 import (
+	"fmt"
 	"net/netip"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/jeremybower/go-common/nilable"
 )
 
 //-----------------------------------------------------------------------------
@@ -14,149 +16,193 @@ import (
 
 func RequiredArray[T any](a pgtype.Array[T]) []T {
 	if !a.Valid {
-		panic("array is required")
+		panic(fmt.Sprintf("invalid array of type %T", a))
 	}
 
 	return a.Elements
+}
+
+func NilableArray[T any](a pgtype.Array[T]) nilable.Slice[T] {
+	if !a.Valid {
+		return nilable.NilSlice[T]()
+	}
+
+	return nilable.NewSlice(a.Elements)
 }
 
 //-----------------------------------------------------------------------------
 // Bool
 //-----------------------------------------------------------------------------
 
-func OptionalBool(b pgtype.Bool) *bool {
-	if !b.Valid {
-		return nil
-	}
-
-	val := b.Bool
-	return &val
-}
-
 func RequiredBool(b pgtype.Bool) bool {
 	if !b.Valid {
-		panic("bool is required")
+		panic("invalid boolean")
 	}
 
 	return b.Bool
+}
+
+func NilableBool(b pgtype.Bool) nilable.Value[bool] {
+	if !b.Valid {
+		return nilable.NilValue[bool]()
+	}
+
+	return nilable.NewValue(&b.Bool)
+}
+
+//-----------------------------------------------------------------------------
+// Float4
+//-----------------------------------------------------------------------------
+
+func RequiredFloat4[T ~float32](n pgtype.Float4) T {
+	if !n.Valid {
+		panic("float32 is required")
+	}
+
+	return T(n.Float32)
+}
+
+func NilableFloat4[T ~float32](n pgtype.Float4) nilable.Value[T] {
+	if !n.Valid {
+		return nilable.NilValue[T]()
+	}
+
+	val := T(n.Float32)
+	return nilable.NewValue(&val)
+}
+
+//-----------------------------------------------------------------------------
+// Float8
+//-----------------------------------------------------------------------------
+
+func RequiredFloat8[T ~float64](n pgtype.Float8) T {
+	if !n.Valid {
+		panic("float64 is required")
+	}
+
+	val := T(n.Float64)
+	return val
+}
+
+func NilableFloat8[T ~float64](n pgtype.Float8) nilable.Value[T] {
+	if !n.Valid {
+		return nilable.NilValue[T]()
+	}
+
+	val := T(n.Float64)
+	return nilable.NewValue(&val)
+}
+
+//-----------------------------------------------------------------------------
+// Int4
+//-----------------------------------------------------------------------------
+
+func RequiredInt4[T ~int32](n pgtype.Int4) T {
+	if !n.Valid {
+		panic("invalid value")
+	}
+
+	return T(n.Int32)
+}
+
+func NilableInt4[T ~int32](n pgtype.Int4) nilable.Value[T] {
+	if !n.Valid {
+		return nilable.NilValue[T]()
+	}
+
+	val := T(n.Int32)
+	return nilable.NewValue(&val)
+}
+
+//-----------------------------------------------------------------------------
+// Int8
+//-----------------------------------------------------------------------------
+
+func RequiredInt8[T ~int64](n pgtype.Int8) T {
+	if !n.Valid {
+		panic("int64 is required")
+	}
+
+	return T(n.Int64)
+}
+
+func NilableInt8[T ~int64](n pgtype.Int8) nilable.Value[T] {
+	if !n.Valid {
+		return nilable.NilValue[T]()
+	}
+
+	val := T(n.Int64)
+	return nilable.NewValue(&val)
 }
 
 //-----------------------------------------------------------------------------
 // IP Address
 //-----------------------------------------------------------------------------
 
-func OptionalIPAddr(ip netip.Addr) netip.Addr {
-	return ip
-}
-
 func RequiredIPAddr(ip netip.Addr) netip.Addr {
 	if !ip.IsValid() {
-		panic("ip address is required")
+		panic("invalid ip address")
 	}
 
 	return ip
+}
+
+func NilableIPAddr(ip netip.Addr) nilable.Value[netip.Addr] {
+	if !ip.IsValid() {
+		return nilable.NilValue[netip.Addr]()
+	}
+
+	return nilable.NewValue(&ip)
 }
 
 //-----------------------------------------------------------------------------
 // JSON
 //-----------------------------------------------------------------------------
 
-func OptionalJSON(value map[string]any) map[string]any {
-	return value
-}
-
 func RequiredJSON(value map[string]any) map[string]any {
 	if value == nil {
-		panic("json is required")
+		panic("invalid json")
 	}
 
 	return value
 }
 
+func NilableJSON(value map[string]any) nilable.Map[string, any] {
+	if value == nil {
+		return nilable.NilMap[string, any]()
+	}
+
+	return nilable.NewMap(value)
+}
+
 //-----------------------------------------------------------------------------
-// Numeric
+// Point
 //-----------------------------------------------------------------------------
 
-func OptionalInt32(n pgtype.Int4) *int32 {
-	if !n.Valid {
-		return nil
+func RequiredPoint[T any](p pgtype.Point, fn func(pgtype.Point) T) T {
+	if !p.Valid {
+		panic("invalid point")
 	}
 
-	val := n.Int32
-	return &val
+	return fn(p)
 }
 
-func RequiredInt32(n pgtype.Int4) int32 {
-	if !n.Valid {
-		panic("int32 is required")
+func NilablePoint[T any](p pgtype.Point, fn func(pgtype.Point) T) nilable.Value[T] {
+	if !p.Valid {
+		return nilable.NilValue[T]()
 	}
 
-	return n.Int32
+	val := fn(p)
+	return nilable.NewValue(&val)
 }
 
-func OptionalInt64(n pgtype.Int8) *int64 {
-	if !n.Valid {
-		return nil
-	}
-
-	val := n.Int64
-	return &val
-}
-
-func RequiredInt64(n pgtype.Int8) int64 {
-	if !n.Valid {
-		panic("uint32 is required")
-	}
-
-	return n.Int64
-}
-
-func OptionalFloat32(n pgtype.Float4) *float32 {
-	if !n.Valid {
-		return nil
-	}
-
-	val := n.Float32
-	return &val
-}
-
-func RequiredFloat32(n pgtype.Float4) float32 {
-	if !n.Valid {
-		panic("float32 is required")
-	}
-
-	return n.Float32
-}
-
-func OptionalFloat64(n pgtype.Float8) *float64 {
-	if !n.Valid {
-		return nil
-	}
-
-	val := n.Float64
-	return &val
-}
-
-func RequiredFloat64(n pgtype.Float8) float64 {
-	if !n.Valid {
-		panic("float64 is required")
-	}
-
-	return n.Float64
+func ToVec2(p pgtype.Point) pgtype.Vec2 {
+	return p.P
 }
 
 //-----------------------------------------------------------------------------
 // Text
 //-----------------------------------------------------------------------------
-
-func OptionalText[T ~string](t pgtype.Text) *T {
-	if !t.Valid {
-		return nil
-	}
-
-	str := T(t.String)
-	return &str
-}
 
 func RequiredText[T ~string](t pgtype.Text) T {
 	if !t.Valid {
@@ -166,18 +212,18 @@ func RequiredText[T ~string](t pgtype.Text) T {
 	return T(t.String)
 }
 
+func NilableText[T ~string](t pgtype.Text) nilable.Value[T] {
+	if !t.Valid {
+		return nilable.NilValue[T]()
+	}
+
+	str := T(t.String)
+	return nilable.NewValue(&str)
+}
+
 //-----------------------------------------------------------------------------
 // Timestamp
 //-----------------------------------------------------------------------------
-
-func OptionalTimestamp(t pgtype.Timestamp) *time.Time {
-	if !t.Valid {
-		return nil
-	}
-
-	time := t.Time
-	return &time
-}
 
 func RequiredTimestamp(t pgtype.Timestamp) time.Time {
 	if !t.Valid {
@@ -187,18 +233,18 @@ func RequiredTimestamp(t pgtype.Timestamp) time.Time {
 	return t.Time
 }
 
+func NilableTimestamp(t pgtype.Timestamp) nilable.Value[time.Time] {
+	if !t.Valid {
+		return nilable.NilValue[time.Time]()
+	}
+
+	time := t.Time
+	return nilable.NewValue(&time)
+}
+
 //-----------------------------------------------------------------------------
 // UUID
 //-----------------------------------------------------------------------------
-
-func OptionalUUID[T ~string](u pgtype.UUID) *T {
-	if !u.Valid {
-		return nil
-	}
-
-	v := RequiredUUID[T](u)
-	return &v
-}
 
 func RequiredUUID[T ~string](u pgtype.UUID) T {
 	if !u.Valid {
@@ -213,4 +259,20 @@ func RequiredUUID[T ~string](u pgtype.UUID) T {
 	}
 
 	return T(id.String())
+}
+
+func NilableUUID[T ~string](u pgtype.UUID) nilable.Value[T] {
+	if !u.Valid {
+		return nilable.NilValue[T]()
+	}
+
+	id, err := uuid.FromBytes(u.Bytes[:])
+	if err != nil {
+		// FromBytes will only panic if there aren't 16 bytes, which is
+		// virtually impossible for a UUID from Postgres.
+		panic(err)
+	}
+
+	str := T(id.String())
+	return nilable.NewValue(&str)
 }

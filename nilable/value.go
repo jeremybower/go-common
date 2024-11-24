@@ -10,11 +10,15 @@ type Value[T any] struct {
 	Value *T
 }
 
-func Invalid[T any]() Value[T] {
-	return Value[T]{}
+func NilValue[T any]() Value[T] {
+	return Value[T]{Valid: true}
 }
 
-func New[T any](value *T) Value[T] {
+func InvalidValue[T any]() Value[T] {
+	return Value[T]{Valid: false}
+}
+
+func NewValue[T any](value *T) Value[T] {
 	return Value[T]{Valid: true, Value: value}
 }
 
@@ -35,6 +39,14 @@ func (v Value[T]) Or(other *T) *T {
 	}
 
 	return other
+}
+
+func (v Value[T]) OrNil() *T {
+	if v.Valid {
+		return v.Value
+	}
+
+	return nil
 }
 
 func (v *Value[T]) UnmarshalJSON(b []byte) error {
