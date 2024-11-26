@@ -6,9 +6,6 @@ require (
 	github.com/georgysavva/scany/v2 v2.1.3
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.7.1
-	github.com/jeremybower/go-env v1.0.0
-	github.com/jeremybower/go-optional v1.2.0
-	github.com/jeremybower/go-pagination v1.0.0
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f
 )

@@ -3,7 +3,7 @@ package postgres
 import (
 	"testing"
 
-	"github.com/jeremybower/go-optional"
+	"github.com/jeremybower/go-common/optional"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -223,7 +223,7 @@ func BenchmarkExecTemplateComplex(b *testing.B) {
 		{{ end }};`,
 	)
 	data := map[string]any{
-		"Name":  optional.New("name"),
+		"Name":  optional.NewValue("name"),
 		"Value": optional.Value[string]{},
 	}
 
