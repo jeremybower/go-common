@@ -3,7 +3,7 @@ package pagination
 import (
 	"math"
 
-	"github.com/jeremybower/go-guard"
+	"github.com/jeremybower/go-common/guard"
 )
 
 type Result[T any] struct {

@@ -10,8 +10,6 @@ require (
 	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f
 )
 
-require github.com/jeremybower/go-guard v1.0.0
-
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
