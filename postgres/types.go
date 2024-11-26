@@ -110,6 +110,27 @@ func NilableFloat8[T ~float64](n pgtype.Float8) nilable.Value[T] {
 }
 
 //-----------------------------------------------------------------------------
+// Int2
+//-----------------------------------------------------------------------------
+
+func RequiredInt2[T ~int16](n pgtype.Int2) T {
+	if !n.Valid {
+		panic("invalid value")
+	}
+
+	return T(n.Int16)
+}
+
+func NilableInt2[T ~int16](n pgtype.Int2) nilable.Value[T] {
+	if !n.Valid {
+		return nilable.NilValue[T]()
+	}
+
+	val := T(n.Int16)
+	return nilable.NewValue(&val)
+}
+
+//-----------------------------------------------------------------------------
 // Int4
 //-----------------------------------------------------------------------------
 
