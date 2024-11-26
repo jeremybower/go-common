@@ -10,7 +10,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/jeremybower/go-env"
+	"github.com/jeremybower/go-common/env"
 	"github.com/stretchr/testify/require"
 )
 

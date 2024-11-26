@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/georgysavva/scany/v2/pgxscan"
-	"github.com/jeremybower/go-pagination"
+	"github.com/jeremybower/go-common/pagination"
 )
 
 func CountT(
@@ -144,7 +144,7 @@ func ListT[T any](
 	minimumPageSize int64,
 	defaultPageSize int64,
 	maximumPageSize int64,
-) (*pagination.Items[*T], error) {
+) (*pagination.Result[*T], error) {
 	// Count the total items.
 	totalItems, err := CountT(ctx, querier, templ, data)
 	if err != nil {
@@ -167,7 +167,7 @@ func ListT[T any](
 	}
 
 	// Success.
-	return &pagination.Items[*T]{
+	return &pagination.Result[*T]{
 		PageIndex:      norm.PageIndex,
 		PageSize:       norm.PageSize,
 		FirstItemIndex: norm.FirstItemIndex,

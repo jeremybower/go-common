@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/jeremybower/go-pagination"
+	"github.com/jeremybower/go-common/pagination"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -121,7 +121,7 @@ func TestListT(t *testing.T) {
 	templ := MustParse(`SELECT {{ if counting }} COUNT(*) {{ else }} * {{ end }} FROM values {{ if not counting }} LIMIT {{ pageSize }} OFFSET {{ firstItemIndex }} {{ end }};`)
 	paged, err := ListT[valueRow](ctx, dbPool, templ, map[string]any{}, 0, 2, 1, 10, 100)
 	require.NoError(t, err)
-	assert.Equal(t, pagination.Items[*valueRow]{
+	assert.Equal(t, pagination.Result[*valueRow]{
 		PageIndex:      0,
 		PageSize:       2,
 		FirstItemIndex: 0,
