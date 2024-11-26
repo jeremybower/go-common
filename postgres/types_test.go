@@ -88,6 +88,20 @@ func TestNilableFloat8(t *testing.T) {
 	assert.Equal(t, float64(1.23), *NilableFloat8[float64](pgtype.Float8{Float64: 1.23, Valid: true}).Value)
 }
 
+func TestRequiredInt2(t *testing.T) {
+	t.Parallel()
+
+	assert.Equal(t, int16(123), RequiredInt2[int16](pgtype.Int2{Int16: 123, Valid: true}))
+	assert.Panics(t, func() { RequiredInt2[int16](pgtype.Int2{Valid: false}) })
+}
+
+func TestNilableInt2(t *testing.T) {
+	t.Parallel()
+
+	assert.Nil(t, NilableInt2[int16](pgtype.Int2{Valid: false}).Value)
+	assert.Equal(t, int16(123), *NilableInt2[int16](pgtype.Int2{Int16: 123, Valid: true}).Value)
+}
+
 func TestRequiredInt4(t *testing.T) {
 	t.Parallel()
 
