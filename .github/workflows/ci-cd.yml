@@ -23,7 +23,6 @@ jobs:
           fetch-depth: "0"
 
       - name: Prepare environment
-        if: ${{ !env.SKIP_JOB }}
         run: |
           echo "DEVTOOLS_USERNAME=$(id -un)" >> $GITHUB_ENV
           echo "DEVTOOLS_UID=$(id -u)" >> $GITHUB_ENV

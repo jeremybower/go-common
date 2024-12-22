@@ -9,7 +9,11 @@ help: ## Show this help message.
 .PHONY: help
 
 init: ## Initialize the project.
-	touch docker-compose.local.yml
+init: docker-compose.local.yml
+.PHONY: init
+
+docker-compose.local.yml:
+	@touch docker-compose.local.yml
 
 test: ## Test the project.
 	@$(eval include .env)
@@ -34,6 +38,7 @@ test: ## Test the project.
 	@set -e; for dbname in $$(psql "${DATABASE_URL}" -c "copy (select datname from pg_database where datname like 'test-%') to stdout") ; do \
 		psql "${DATABASE_URL}" -q -c "DROP DATABASE \"$$dbname\"" ; \
 	done
+.PHONY: test
 
 tidy: ## Tidy the go modules.
 	@$(eval include .env)
