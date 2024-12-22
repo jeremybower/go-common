@@ -6,6 +6,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestIf(t *testing.T) {
+	assert.Equal(t, 1, If(true, 1, 2))
+	assert.Equal(t, 2, If(false, 1, 2))
+}
+
 func TestPtr(t *testing.T) {
 	str := "hello"
 	assert.Equal(t, &str, Ptr(str))
