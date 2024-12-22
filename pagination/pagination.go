@@ -32,10 +32,10 @@ func Normalize(
 	maximumPageSize int64,
 ) *Normalized {
 	// Guard against invalid inputs.
-	guard.GTE(totalItems, 0)
-	guard.GTE(minimumPageSize, 1)
-	guard.GTE(defaultPageSize, minimumPageSize)
-	guard.GTE(maximumPageSize, defaultPageSize)
+	guard.GreaterThanEq(totalItems, 0, "totalItems must be greater than or equal to 0")
+	guard.GreaterThanEq(minimumPageSize, 1, "minimumPageSize must be greater than or equal to 1")
+	guard.GreaterThanEq(defaultPageSize, minimumPageSize, "defaultPageSize must be greater than or equal to minimumPageSize")
+	guard.GreaterThanEq(maximumPageSize, defaultPageSize, "maximumPageSize must be greater than or equal to defaultPageSize")
 
 	// Normalize the page size.
 	if pageSize == 0 {

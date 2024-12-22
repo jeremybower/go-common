@@ -1,135 +1,129 @@
 package guard
 
 import (
-	"fmt"
-	"reflect"
-
 	"golang.org/x/exp/constraints"
 )
 
-func Equal[T any](a, b T) {
-	if !reflect.DeepEqual(a, b) {
-		panic("values are not equal")
-	}
-}
+// ----------------------------------------------------------------------------
+// Boolean
+// ----------------------------------------------------------------------------
 
-func isEmpty(value interface{}) bool {
-	if value == nil {
-		return true
-	}
-
-	v := reflect.ValueOf(value)
-
-	switch v.Kind() {
-	case reflect.Chan, reflect.Map, reflect.Slice:
-		return v.Len() == 0
-	case reflect.Ptr:
-		if v.IsNil() {
-			return true
-		}
-		deref := v.Elem().Interface()
-		return isEmpty(deref)
-	default:
-		zero := reflect.Zero(v.Type())
-		return reflect.DeepEqual(value, zero.Interface())
-	}
-}
-
-func NotEmpty(value any) {
-	if isEmpty(value) {
-		panic("value is empty")
-	}
-}
-
-func NilOrNotEmpty(value any) {
-	if value != nil && isEmpty(value) {
-		panic("value is empty")
-	}
-}
-
-func Each[T any](s []T, fn func(v any)) {
-	for _, v := range s {
-		fn(v)
-	}
-}
-
-func isNil(value any) bool {
-	if value == nil {
-		return true
-	}
-
-	v := reflect.ValueOf(value)
-	switch v.Kind() {
-	case
-		reflect.Chan, reflect.Func,
-		reflect.Interface, reflect.Map,
-		reflect.Ptr, reflect.Slice, reflect.UnsafePointer:
-		if v.IsNil() {
-			return true
-		}
-	}
-
-	return false
-}
-
-func NotNil(value any) {
-	if isNil(value) {
-		panic("value is nil")
-	}
-}
-
-func isZero(value any) bool {
-	if value == nil {
-		return true
-	}
-
-	return reflect.DeepEqual(value, reflect.Zero(reflect.TypeOf(value)).Interface())
-}
-
-func NotZero(value any) {
-	if isZero(value) {
-		panic("value is zero")
-	}
-}
-
-func GT[T constraints.Ordered](value T, target T) {
-	if value <= target {
-		panic(fmt.Sprintf("%v is not greater than %v:", value, target))
-	}
-}
-
-func GTE[T constraints.Ordered](value T, target T) {
-	if value < target {
-		panic(fmt.Sprintf("%v is not greater than or equal to %v", value, target))
-	}
-}
-
-func LT[T constraints.Ordered](value T, target T) {
-	if value >= target {
-		panic(fmt.Sprintf("%v is not less than %v", value, target))
-	}
-}
-
-func LTE[T constraints.Ordered](value T, target T) {
-	if value > target {
-		panic(fmt.Sprintf("%v is not less than or equal to %v", value, target))
-	}
-}
-
-func True(value bool) {
+func True(value bool, msg string) {
 	if !value {
-		panic("value is false when expected true")
+		panic(msg)
 	}
 }
 
-func False(value bool) {
+func False(value bool, msg string) {
 	if value {
-		panic("value is true when expected false")
+		panic(msg)
 	}
 }
 
-func Xor(a, b bool) {
+func Exclusive(a, b bool, msg string) {
 	if !((a || b) && !(a && b)) {
-		panic("values are not exclusive")
+		panic(msg)
+	}
+}
+
+// ----------------------------------------------------------------------------
+// Equality
+// ----------------------------------------------------------------------------
+
+func Equal[T comparable](a, b T, msg string) {
+	if a != b {
+		panic(msg)
+	}
+}
+
+func NotEqual[T comparable](a, b T, msg string) {
+	if a == b {
+		panic(msg)
+	}
+}
+
+// ----------------------------------------------------------------------------
+// Order
+// ----------------------------------------------------------------------------
+
+func LessThan[T constraints.Ordered](a, b T, msg string) {
+	if a >= b {
+		panic(msg)
+	}
+}
+
+func LessThanFunc[T any](a, b T, fn func(a, b T) int, msg string) {
+	if fn(a, b) >= 0 {
+		panic(msg)
+	}
+}
+
+func LessThanEq[T constraints.Ordered](a, b T, msg string) {
+	if a > b {
+		panic(msg)
+	}
+}
+
+func LessThanEqFunc[T any](a, b T, fn func(a, b T) int, msg string) {
+	if fn(a, b) > 0 {
+		panic(msg)
+	}
+}
+
+func GreaterThan[T constraints.Ordered](a, b T, msg string) {
+	if a <= b {
+		panic(msg)
+	}
+}
+
+func GreaterThanFunc[T any](a, b T, fn func(a, b T) int, msg string) {
+	if fn(a, b) <= 0 {
+		panic(msg)
+	}
+}
+
+func GreaterThanEq[T constraints.Ordered](a, b T, msg string) {
+	if a < b {
+		panic(msg)
+	}
+}
+
+func GreaterThanEqFunc[T any](a, b T, fn func(a, b T) int, msg string) {
+	if fn(a, b) < 0 {
+		panic(msg)
+	}
+}
+
+// ----------------------------------------------------------------------------
+// Nil
+// ----------------------------------------------------------------------------
+
+func Nil(value any, msg string) {
+	if value != nil {
+		panic(msg)
+	}
+}
+
+func NotNil(value any, msg string) {
+	if value == nil {
+		panic(msg)
+	}
+}
+
+// ----------------------------------------------------------------------------
+// Zero
+// ----------------------------------------------------------------------------
+
+func Zero[T comparable](value T, msg string) {
+	var zero T
+	if value != zero {
+		panic(msg)
+	}
+}
+
+func NotZero[T comparable](value T, msg string) {
+	var zero T
+	if value == zero {
+		panic(msg)
 	}
 }

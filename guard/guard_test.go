@@ -6,96 +6,114 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const msg = "test message"
+
 func TestEqual(t *testing.T) {
-	assert.NotPanics(t, func() { Equal(1, 1) })
-	assert.Panics(t, func() { Equal(1, 2) })
+	assert.NotPanics(t, func() { Equal(1, 1, msg) })
+	assert.Panics(t, func() { Equal(1, 2, msg) })
 }
 
-func TestNotEmpty(t *testing.T) {
-	assert.NotPanics(t, func() { NotEmpty(1) })
-	assert.Panics(t, func() { NotEmpty("") })
-	assert.Panics(t, func() { NotEmpty(nil) })
-
-	makeChan := func(len int) chan int {
-		c := make(chan int, len)
-		for i := 0; i < len; i++ {
-			c <- i
-		}
-		return c
-	}
-
-	assert.Panics(t, func() { NotEmpty(makeChan(0)) })
-	assert.NotPanics(t, func() { NotEmpty(makeChan(1)) })
-
-	var nilStr *string = nil
-	assert.Panics(t, func() { NotEmpty(nilStr) })
-
-	emptyStr := ""
-	assert.Panics(t, func() { NotEmpty(&emptyStr) })
-
-	nonEmptyStr := "hello"
-	assert.NotPanics(t, func() { NotEmpty(&nonEmptyStr) })
+func TestNotEqual(t *testing.T) {
+	assert.NotPanics(t, func() { NotEqual(1, 2, msg) })
+	assert.Panics(t, func() { NotEqual(1, 1, msg) })
 }
 
-func TestLT(t *testing.T) {
-	assert.NotPanics(t, func() { LT(1, 2) })
-	assert.Panics(t, func() { LT(2, 1) })
+func TestLessThan(t *testing.T) {
+	assert.NotPanics(t, func() { LessThan(1, 2, msg) })
+	assert.Panics(t, func() { LessThan(2, 1, msg) })
 }
 
-func TestLTE(t *testing.T) {
-	assert.NotPanics(t, func() { LTE(1, 2) })
-	assert.NotPanics(t, func() { LTE(2, 2) })
-	assert.Panics(t, func() { LTE(2, 1) })
+func TestLessThanFunc(t *testing.T) {
+	assert.NotPanics(t, func() { LessThanFunc(1, 2, func(a, b int) int { return a - b }, msg) })
+	assert.Panics(t, func() { LessThanFunc(2, 1, func(a, b int) int { return a - b }, msg) })
 }
 
-func TestGT(t *testing.T) {
-	assert.NotPanics(t, func() { GT(2, 1) })
-	assert.Panics(t, func() { GT(1, 2) })
+func TestLessThanEq(t *testing.T) {
+	assert.NotPanics(t, func() { LessThanEq(1, 2, msg) })
+	assert.NotPanics(t, func() { LessThanEq(2, 2, msg) })
+	assert.Panics(t, func() { LessThanEq(2, 1, msg) })
 }
 
-func TestGTE(t *testing.T) {
-	assert.NotPanics(t, func() { GTE(2, 1) })
-	assert.NotPanics(t, func() { GTE(2, 2) })
-	assert.Panics(t, func() { GTE(1, 2) })
+func TestLessThanEqFunc(t *testing.T) {
+	assert.NotPanics(t, func() { LessThanEqFunc(1, 2, func(a, b int) int { return a - b }, msg) })
+	assert.NotPanics(t, func() { LessThanEqFunc(2, 2, func(a, b int) int { return a - b }, msg) })
+	assert.Panics(t, func() { LessThanEqFunc(2, 1, func(a, b int) int { return a - b }, msg) })
+}
+
+func TestGreaterThan(t *testing.T) {
+	assert.NotPanics(t, func() { GreaterThan(2, 1, msg) })
+	assert.Panics(t, func() { GreaterThan(1, 2, msg) })
+}
+
+func TestGreaterThanFunc(t *testing.T) {
+	assert.NotPanics(t, func() { GreaterThanFunc(2, 1, func(a, b int) int { return a - b }, msg) })
+	assert.Panics(t, func() { GreaterThanFunc(1, 2, func(a, b int) int { return a - b }, msg) })
+}
+
+func TestGreaterThanEq(t *testing.T) {
+	assert.NotPanics(t, func() { GreaterThanEq(2, 1, msg) })
+	assert.NotPanics(t, func() { GreaterThanEq(2, 2, msg) })
+	assert.Panics(t, func() { GreaterThanEq(1, 2, msg) })
+}
+
+func TestGreaterThanEqFunc(t *testing.T) {
+	assert.NotPanics(t, func() { GreaterThanEqFunc(2, 1, func(a, b int) int { return a - b }, msg) })
+	assert.NotPanics(t, func() { GreaterThanEqFunc(2, 2, func(a, b int) int { return a - b }, msg) })
+	assert.Panics(t, func() { GreaterThanEqFunc(1, 2, func(a, b int) int { return a - b }, msg) })
 }
 
 func TestTrue(t *testing.T) {
-	assert.NotPanics(t, func() { True(true) })
-	assert.Panics(t, func() { True(false) })
+	assert.NotPanics(t, func() { True(true, msg) })
+	assert.Panics(t, func() { True(false, msg) })
 }
 
 func TestFalse(t *testing.T) {
-	assert.NotPanics(t, func() { False(false) })
-	assert.Panics(t, func() { False(true) })
+	assert.NotPanics(t, func() { False(false, msg) })
+	assert.Panics(t, func() { False(true, msg) })
 }
 
-func TestXor(t *testing.T) {
-	assert.NotPanics(t, func() { Xor(true, false) })
-	assert.Panics(t, func() { Xor(true, true) })
-	assert.Panics(t, func() { Xor(false, false) })
+func TestExclusive(t *testing.T) {
+	assert.NotPanics(t, func() { Exclusive(true, false, msg) })
+	assert.Panics(t, func() { Exclusive(true, true, msg) })
+	assert.Panics(t, func() { Exclusive(false, false, msg) })
 }
 
-func TestNilOrNotEmpty(t *testing.T) {
-	assert.NotPanics(t, func() { NilOrNotEmpty(nil) })
-	assert.NotPanics(t, func() { NilOrNotEmpty(1) })
-	assert.Panics(t, func() { NilOrNotEmpty(0) })
-}
-
-func TestEach(t *testing.T) {
-	assert.NotPanics(t, func() { Each([]int{1, 2, 3}, NotNil) })
-	assert.Panics(t, func() { Each([]*int{nil, nil, nil}, NotNil) })
+func TestNil(t *testing.T) {
+	value := "value"
+	assert.NotPanics(t, func() { Nil(nil, msg) })
+	assert.Panics(t, func() { Nil(&value, msg) })
 }
 
 func TestNotNil(t *testing.T) {
-	var nonNilValue = ""
+	value := "value"
+	assert.NotPanics(t, func() { NotNil(&value, msg) })
+	assert.Panics(t, func() { NotNil(nil, msg) })
+}
+
+func TestZero(t *testing.T) {
+	assert.NotPanics(t, func() { Zero(0, msg) })
+	assert.Panics(t, func() { Zero(1, msg) })
+
+	assert.NotPanics(t, func() { Zero("", msg) })
+	assert.Panics(t, func() { Zero("value", msg) })
+
+	value := "value"
+	var nonNilValue = &value
 	var nilValue *string = nil
-	assert.NotPanics(t, func() { NotNil(nonNilValue) })
-	assert.Panics(t, func() { NotNil(nilValue) })
-	assert.Panics(t, func() { NotNil(nil) })
+	assert.NotPanics(t, func() { Zero(nilValue, msg) })
+	assert.Panics(t, func() { Zero(nonNilValue, msg) })
 }
 
 func TestNotZero(t *testing.T) {
-	assert.NotPanics(t, func() { NotZero(1) })
-	assert.Panics(t, func() { NotZero(0) })
-	assert.Panics(t, func() { NotZero(nil) })
+	assert.NotPanics(t, func() { NotZero(1, msg) })
+	assert.Panics(t, func() { NotZero(0, msg) })
+
+	assert.NotPanics(t, func() { NotZero("value", msg) })
+	assert.Panics(t, func() { NotZero("", msg) })
+
+	value := "value"
+	var nonNilValue = &value
+	var nilValue *string = nil
+	assert.NotPanics(t, func() { NotZero(nonNilValue, msg) })
+	assert.Panics(t, func() { NotZero(nilValue, msg) })
 }
