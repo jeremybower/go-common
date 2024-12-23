@@ -134,7 +134,7 @@ func NilableInt2[T ~int16](n pgtype.Int2) nilable.Value[T] {
 // Int4
 //-----------------------------------------------------------------------------
 
-func RequiredInt4[T ~int32](n pgtype.Int4) T {
+func RequiredInt4[T ~int | ~int32](n pgtype.Int4) T {
 	if !n.Valid {
 		panic("invalid value")
 	}
@@ -142,7 +142,7 @@ func RequiredInt4[T ~int32](n pgtype.Int4) T {
 	return T(n.Int32)
 }
 
-func NilableInt4[T ~int32](n pgtype.Int4) nilable.Value[T] {
+func NilableInt4[T ~int | ~int32](n pgtype.Int4) nilable.Value[T] {
 	if !n.Valid {
 		return nilable.NilValue[T]()
 	}
