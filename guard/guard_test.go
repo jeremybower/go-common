@@ -78,15 +78,29 @@ func TestExclusive(t *testing.T) {
 	assert.Panics(t, func() { Exclusive(false, false, msg) })
 }
 
+func TestError(t *testing.T) {
+	assert.NotPanics(t, func() { Error(assert.AnError, msg) })
+	assert.Panics(t, func() { Error(nil, msg) })
+}
+
+func TestNoError(t *testing.T) {
+	assert.NotPanics(t, func() { NoError(nil, msg) })
+	assert.Panics(t, func() { NoError(assert.AnError, msg) })
+}
+
 func TestNil(t *testing.T) {
-	value := "value"
+	var nilValue *string
+	nonNilValue := "value"
 	assert.NotPanics(t, func() { Nil(nil, msg) })
-	assert.Panics(t, func() { Nil(&value, msg) })
+	assert.NotPanics(t, func() { Nil(nilValue, msg) })
+	assert.Panics(t, func() { Nil(&nonNilValue, msg) })
 }
 
 func TestNotNil(t *testing.T) {
-	value := "value"
-	assert.NotPanics(t, func() { NotNil(&value, msg) })
+	var nilValue *string
+	nonNilValue := "value"
+	assert.NotPanics(t, func() { NotNil(&nonNilValue, msg) })
+	assert.Panics(t, func() { NotNil(nilValue, msg) })
 	assert.Panics(t, func() { NotNil(nil, msg) })
 }
 
