@@ -105,6 +105,9 @@ func TestNilableInt2(t *testing.T) {
 func TestRequiredInt4(t *testing.T) {
 	t.Parallel()
 
+	assert.Equal(t, int(123), RequiredInt4[int](pgtype.Int4{Int32: 123, Valid: true}))
+	assert.Panics(t, func() { RequiredInt4[int](pgtype.Int4{Valid: false}) })
+
 	assert.Equal(t, int32(123), RequiredInt4[int32](pgtype.Int4{Int32: 123, Valid: true}))
 	assert.Panics(t, func() { RequiredInt4[int32](pgtype.Int4{Valid: false}) })
 }
