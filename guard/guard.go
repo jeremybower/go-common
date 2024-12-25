@@ -1,6 +1,8 @@
 package guard
 
 import (
+	"reflect"
+
 	"golang.org/x/exp/constraints"
 )
 
@@ -38,6 +40,38 @@ func Equal[T comparable](a, b T, msg string) {
 
 func NotEqual[T comparable](a, b T, msg string) {
 	if a == b {
+		panic(msg)
+	}
+}
+
+// ----------------------------------------------------------------------------
+// Error
+// ----------------------------------------------------------------------------
+
+func Error(err error, msg string) {
+	if err == nil {
+		panic(msg)
+	}
+}
+
+func NoError(err error, msg string) {
+	if err != nil {
+		panic(msg)
+	}
+}
+
+// ----------------------------------------------------------------------------
+// Nil
+// ----------------------------------------------------------------------------
+
+func Nil(value any, msg string) {
+	if value != nil && !reflect.ValueOf(value).IsNil() {
+		panic(msg)
+	}
+}
+
+func NotNil(value any, msg string) {
+	if value == nil || reflect.ValueOf(value).IsNil() {
 		panic(msg)
 	}
 }
@@ -90,22 +124,6 @@ func GreaterThanEq[T constraints.Ordered](a, b T, msg string) {
 
 func GreaterThanEqFunc[T any](a, b T, fn func(a, b T) int, msg string) {
 	if fn(a, b) < 0 {
-		panic(msg)
-	}
-}
-
-// ----------------------------------------------------------------------------
-// Nil
-// ----------------------------------------------------------------------------
-
-func Nil(value any, msg string) {
-	if value != nil {
-		panic(msg)
-	}
-}
-
-func NotNil(value any, msg string) {
-	if value == nil {
 		panic(msg)
 	}
 }
